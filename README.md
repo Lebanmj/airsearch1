@@ -1,66 +1,228 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Flight Search System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based flight search and booking system that allows users to search for flights between cities, view available options, and make bookings.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Search flights by origin and destination
+- Filter flights by multiple criteria:
+  - Origin and destination dropdown selection
+  - Date of travel
+  - Number of passengers
+- Advanced search results with:
+  - Airline filtering
+  - Price range filtering
+  - Sort by price, duration, and departure time
+  - Real-time seat availability
+  - Operational days display
+- Responsive design for mobile and desktop
+- AJAX-based search for smooth user experience
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+NOTE : Book functionality has  not been worked upon as it wasnt mentioned in the email.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Requirements
 
-## Learning Laravel
+- PHP >= 8.1
+- MySQL >= 5.7
+- Composer
+- Node.js & NPM
+- Laravel 10.x
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Installation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. Clone the repository
+```bash
+git clone https://github.com/Lebanmj/airsearch1.git
+cd flight-search
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. Install PHP dependencies
+```bash
+composer install
+```
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+3. Set up environment file
+```bash
+cp .env.example .env
+php artisan key:generate
 
-### Premium Partners
+OR
+ .env_file 
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+ APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=base64:2v3c0PvNfVxw0vgTW9KM4PpAk2qql1FDzM37qCnhpIo=
+APP_DEBUG=true
+APP_URL=http://localhost
 
-## Contributing
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=airsearch
+DB_USERNAME=root
+DB_PASSWORD=
 
-## Code of Conduct
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+MEMCACHED_HOST=127.0.0.1
 
-## Security Vulnerabilities
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
 
-## License
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+VITE_APP_NAME="${APP_NAME}"
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+
+```
+
+
+4. Run migrations and seed the database
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+## Database Structure
+
+The system uses the following database tables:
+
+### airlines
+- id (primary key)
+- name (string) - Airline name
+- code (string) - Airline code (e.g., AI, 9W)
+- created_at (timestamp)
+- updated_at (timestamp)
+
+### flights
+- id (primary key)
+- airline_id (foreign key)
+- flight_number (string)
+- origin (string)
+- destination (string)
+- departure (datetime)
+- arrival (datetime)
+- duration (string)
+- price (decimal)
+- available_seats (integer)
+- created_at (timestamp)
+- updated_at (timestamp)
+
+### flight_operational_days
+- id (primary key)
+- flight_id (foreign key)
+- day (tinyinteger) - Day of week (0-6, Sunday-Saturday)
+- created_at (timestamp)
+- updated_at (timestamp)
+
+## API Routes
+
+### GET /api/flights/search
+Search for flights with the following parameters:
+- origin (required, 3 characters)
+- destination (required, 3 characters)
+- departure_date (required, date)
+- passengers (required, integer)
+
+Response format:
+```json
+{
+    "status": "success",
+    "data": [
+        {
+            "id": 1,
+            "airline": "Airline Name",
+            "airlineCode": "XX",
+            "flightNumber": "123",
+            "origin": "ABC",
+            "destination": "XYZ",
+            "departure": "2024-02-08T10:00:00",
+            "arrival": "2024-02-08T12:00:00",
+            "duration": "2h 00m",
+            "price": 5000,
+            "availableSeats": 100
+        }
+    ]
+}
+```
+
+## Directory Structure
+
+```
+flight-search/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── FlightController.php
+│   │   └── Requests/
+│   │       └── FlightSearchRequest.php
+│   └── Models/
+│       ├── Airline.php
+│       ├── Flight.php
+│       └── FlightOperationalDay.php
+├── database/
+│   ├── migrations/
+│   │   ├── create_airlines_table.php
+│   │   ├── create_flights_table.php
+│   │   └── create_flight_operational_days_table.php
+│   └── seeders/
+│       ├── FlightSystemSeeder.php
+│       └── flight_data.json
+└── resources/
+    └── views/
+        └── flights/
+            ├── index.blade.php
+            └── search.blade.php
+```
+
+## Sample Data
+
+The system comes with sample flight data including routes between various cities. The seed data includes:
+- Multiple airlines (Jet Airways, Air India, Indigo, SpiceJet)
+- Various routes with different timings
+- Different price points
+- Varied seat availability
+- Multiple operational days
+
+
+
+## Security
+
+If you discover any security-related issues, please email [lebanjoycardozo@gmail.com] instead of using the issue tracker.
+
