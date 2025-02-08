@@ -1,203 +1,148 @@
-{{-- resources/views/flights/index.blade.php --}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flight Search System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</head>
-<body>
-    <div class="container py-5">
-        <h1 class="text-center mb-4">Flight Search</h1>
-        
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
 
-        <div class="card shadow-sm">
+<!-- resources/views/flights/index.blade.php -->
+@extends('layouts.app')
+
+@section('title', 'Search Flights')
+
+@section('content')
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">Search Flights</div>
             <div class="card-body">
-                <form id="searchForm" action="{{ route('flights.search') }}" method="GET" class="row g-3">
-                    <div class="col-md-6">
-                        <label for="origin" class="form-label">Origin</label>
-                        <input type="text" 
-                               class="form-control @error('origin') is-invalid @enderror" 
-                               id="origin" 
-                               name="origin" 
-                               value="{{ old('origin') }}"
-                               placeholder="PNQ"
-                               maxlength="3"
-                               required>
+            <form id="flightSearchForm" action="{{ route('flights.search') }}" method="GET">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="origin" class="form-label">Origin</label>
+                            <select class="form-select" id="origin" name="origin" required>
+                                <option value="">Select Origin</option>
+                                @foreach($origins as $origin)
+                                    <option value="{{ $origin }}" {{ old('origin') == $origin ? 'selected' : '' }}>
+                                        {{ $origin }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('origin')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="destination" class="form-label">Destination</label>
+                            <select class="form-select" id="destination" name="destination" required>
+                                <option value="">Select Destination</option>
+                                @foreach($destinations as $destination)
+                                    <option value="{{ $destination }}" {{ old('destination') == $destination ? 'selected' : '' }}>
+                                        {{ $destination }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('destination')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <label for="destination" class="form-label">Destination</label>
-                        <input type="text" 
-                               class="form-control @error('destination') is-invalid @enderror" 
-                               id="destination" 
-                               name="destination" 
-                               value="{{ old('destination') }}"
-                               placeholder="DEL"
-                               maxlength="3"
-                               required>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="departure_date" class="form-label">Departure Date</label>
+                            <input type="date" class="form-control" id="departure_date" name="departure_date" 
+                                required value="{{ old('departure_date') }}">
+                            @error('departure_date')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <label for="passengers" class="form-label">Passengers</label>
+                            <input type="number" class="form-control" id="passengers" name="passengers" 
+                                required min="1" value="{{ old('passengers', 1) }}">
+                            @error('passengers')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <label for="departure_date" class="form-label">Departure Date</label>
-                        <input type="date" 
-                               class="form-control @error('departure_date') is-invalid @enderror" 
-                               id="departure_date" 
-                               name="departure_date" 
-                               value="{{ old('departure_date') }}"
-                               required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="passengers" class="form-label">Passengers</label>
-                        <input type="number" 
-                               class="form-control @error('passengers') is-invalid @enderror" 
-                               id="passengers" 
-                               name="passengers" 
-                               value="{{ old('passengers', 1) }}"
-                               min="1"
-                               required>
-                    </div>
-
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-primary px-5">Search Flights</button>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Search Flights</button>
                     </div>
                 </form>
             </div>
         </div>
-
-        <div id="searchResults" class="mt-4">
-            @isset($flights)
-                @if($flights->isEmpty())
-                    <div class="alert alert-info">
-                        No flights found matching your criteria.
-                    </div>
-                @else
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Airline</th>
-                                    <th>Flight</th>
-                                    <th>Departure</th>
-                                    <th>Arrival</th>
-                                    <th>Duration</th>
-                                    <th>Available Seats</th>
-                                    <th>Price</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($flights as $flight)
-                                    <tr>
-                                        <td>
-                                            <span class="fw-bold">{{ $flight->airline }}</span>
-                                            <br>
-                                            <small class="text-muted">{{ $flight->airlineCode }}-{{ $flight->flightNumber }}</small>
-                                        </td>
-                                        <td>{{ $flight->flightNumber }}</td>
-                                        <td>
-                                            {{ $flight->departure->format('H:i') }}
-                                            <br>
-                                            <small class="text-muted">{{ $flight->departure->format('d M Y') }}</small>
-                                        </td>
-                                        <td>
-                                            {{ $flight->arrival->format('H:i') }}
-                                            <br>
-                                            <small class="text-muted">{{ $flight->arrival->format('d M Y') }}</small>
-                                        </td>
-                                        <td>{{ $flight->duration }}</td>
-                                        <td>{{ $flight->availableSeats }}</td>
-                                        <td>
-                                            <span class="fw-bold">₹{{ number_format($flight->price, 2) }}</span>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary book-flight" 
-                                                    data-flight-id="{{ $flight->id }}"
-                                                    @if($flight->availableSeats < request('passengers', 1)) disabled @endif>
-                                                Book Now
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
-            @endisset
-        </div>
     </div>
+</div>
 
-    <!-- Booking Modal -->
-    <div class="modal fade" id="bookingModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Booking</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to book this flight?</p>
-                    <div id="bookingDetails"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="confirmBooking">Confirm Booking</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<div id="searchResults" class="mt-4"></div>
+@endsection
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script>
-        // Initialize date picker
-        flatpickr("#departure_date", {
-            minDate: "today",
-            dateFormat: "Y-m-d"
-        });
-
-        // Handle booking button clicks
-        document.querySelectorAll('.book-flight').forEach(button => {
-            button.addEventListener('click', function() {
-                const flightId = this.dataset.flightId;
-                const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
-                
-                // You can add AJAX call here to get flight details
-                document.getElementById('bookingDetails').innerHTML = 'Loading...';
-                
-                // Show modal
-                modal.show();
-            });
-        });
-
-        // Handle booking confirmation
-        document.getElementById('confirmBooking').addEventListener('click', function() {
-            // Add your booking logic here
-            alert('Booking functionality would go here');
-        });
-
-        // Form validation
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            const origin = document.getElementById('origin').value.toUpperCase();
-            const destination = document.getElementById('destination').value.toUpperCase();
-            
-            if (origin === destination) {
-                e.preventDefault();
-                alert('Origin and destination cannot be the same');
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#flightSearchForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        $.ajax({
+            url: '{{ route("api.flights.search") }}',
+            type: 'GET',
+            data: $(this).serialize(),
+            beforeSend: function() {
+                $('#searchResults').html('<div class="text-center"><div class="spinner-border" role="status"></div></div>');
+            },
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#searchResults').html(displayFlights(response.data));
+                }
+            },
+            error: function(xhr) {
+                let errors = '';
+                if (xhr.status === 422) {
+                    const response = xhr.responseJSON;
+                    for (let field in response.errors) {
+                        errors += `<div class="alert alert-danger">${response.errors[field]}</div>`;
+                    }
+                } else {
+                    errors = '<div class="alert alert-danger">An error occurred while searching flights.</div>';
+                }
+                $('#searchResults').html(errors);
             }
         });
-    </script>
-</body>
-</html>
+    });
+
+    function displayFlights(flights) {
+        if (flights.length === 0) {
+            return '<div class="alert alert-info">No flights found matching your criteria.</div>';
+        }
+
+        let html = '<div class="row">';
+        flights.forEach(flight => {
+            html += `
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${flight.airline} (${flight.airlineCode}${flight.flightNumber})</h5>
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="mb-1"><strong>Departure:</strong> ${new Date(flight.departure).toLocaleTimeString()}</p>
+                                    <p class="mb-1"><strong>Origin:</strong> ${flight.origin}</p>
+                                </div>
+                                <div class="col-6">
+                                    <p class="mb-1"><strong>Arrival:</strong> ${new Date(flight.arrival).toLocaleTimeString()}</p>
+                                    <p class="mb-1"><strong>Destination:</strong> ${flight.destination}</p>
+                                </div>
+                            </div>
+                            <p class="mb-1"><strong>Duration:</strong> ${flight.duration}</p>
+                            <p class="mb-1"><strong>Price:</strong> ₹${flight.price}</p>
+                            <p class="mb-1"><strong>Available Seats:</strong> ${flight.availableSeats}</p>
+                            <button class="btn btn-primary mt-2" onclick="bookFlight(${flight.id})">Book Now</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function bookFlight(flightId) {
+        // Implement booking functionality
+        alert('Booking functionality would go here');
+    }
+});
+</script>
+@endpush

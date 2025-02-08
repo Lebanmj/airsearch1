@@ -20,6 +20,7 @@ class Flight extends Model
         'duration'
     ];
 
+
     protected $casts = [
         'departure' => 'datetime',
         'arrival' => 'datetime',

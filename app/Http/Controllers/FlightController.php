@@ -15,9 +15,11 @@ class FlightController extends Controller
      */
     public function index()
     {
-        return view('flights.index');
+        $origins = Flight::select('origin')->distinct()->pluck('origin');
+        $destinations = Flight::select('destination')->distinct()->pluck('destination');
+        
+        return view('flights.index', compact('origins', 'destinations'));
     }
-
     /**
      * Handle the search request and return view with results
      */
@@ -109,16 +111,29 @@ class FlightController extends Controller
         $departureDate = Carbon::parse($request->departure_date);
         $dayOfWeek = $departureDate->dayOfWeek;
 
-        return Flight::where('origin', $request->origin)
+        return Flight::with('airline')  // Add this to get airline information
+            ->where('origin', $request->origin)
             ->where('destination', $request->destination)
-            ->where('availableSeats', '>=', $request->passengers)
-            ->whereJsonContains('operationalDays', $dayOfWeek)
+            ->where('available_seats', '>=', $request->passengers)
+            ->whereHas('operationalDays', function($query) use ($dayOfWeek) {
+                $query->where('day', $dayOfWeek);
+            })
             ->orderBy('price')
             ->get()
             ->map(function ($flight) {
-                $flight->departure = Carbon::parse($flight->departure);
-                $flight->arrival = Carbon::parse($flight->arrival);
-                return $flight;
+                return [
+                    'id' => $flight->id,
+                    'airline' => $flight->airline->name,
+                    'airlineCode' => $flight->airline->code,
+                    'flightNumber' => $flight->flight_number,
+                    'origin' => $flight->origin,
+                    'destination' => $flight->destination,
+                    'departure' => $flight->departure,
+                    'arrival' => $flight->arrival,
+                    'duration' => $flight->duration,
+                    'price' => $flight->price,
+                    'availableSeats' => $flight->available_seats,
+                ];
             });
     }
 }
